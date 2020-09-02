@@ -28,15 +28,28 @@ def init_deck():
     return deck
 
 
-def play(deck, board_state, token):
+def print_hands_and_state(hands, board_state):
+    print("composition des feux d'artifices :")
+    print('\x1b[0;30;41m' + str(board_state['r']) + '\x1b[0m' + '   '
+        + '\x1b[0;30;42m' + str(board_state['g']) + '\x1b[0m' + '   '
+        + '\x1b[0;30;47m' + str(board_state['w']) + '\x1b[0m' + '   '
+        + '\x1b[0;30;44m' + str(board_state['b']) + '\x1b[0m' + '   '
+        + '\x1b[0;30;43m' + str(board_state['y']) + '\x1b[0m')
+    print("\n\nMains des joueurs")
+
+
+def play(deck, hands, board_state, token):
     while (True):
+        print_hands_and_state(hands, board_state)
         print("Que faire ?")
         inp = input()
         if inp  == 'play':#, 'discard', 'hint']:
-            
-            print("Ce n'est pas une action")\
-        else:
-            
+            print("Quelle carte a jouer ?")
+        elif inp == 'discard':
+            print("Quelle carte a defausser ?")
+            pass
+        elif inp == 'hint':
+            print("Quel indice donner ?")
 
 
 if __name__ == '__main__':
@@ -75,6 +88,9 @@ if __name__ == '__main__':
     #hints = 8
     tokens = {'error': 0, 'hint': 8}
     current_player = 0
+    print_hands_and_state(hands, board_state)
+    print('tjghjghghghgr')
+    exit(1)
     while True:
         if error > 2:
             print("Trop d'erreurs ! C'est perdu !")
@@ -84,3 +100,4 @@ if __name__ == '__main__':
             print(board_state)
             exit(1)
         if current_player == 0:
+            play(deck, hands, board_state, token)
