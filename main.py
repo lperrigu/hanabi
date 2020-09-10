@@ -29,7 +29,7 @@ def init_deck():
 
 
 def print_hands_and_state(hands, board_state):
-    print("composition des feux d'artifices :")
+    print("Composition des feux d'artifices :")
     print('\x1b[0;30;41m' + str(board_state['r']) + '\x1b[0m' + '   '
         + '\x1b[0;30;42m' + str(board_state['g']) + '\x1b[0m' + '   '
         + '\x1b[0;30;47m' + str(board_state['w']) + '\x1b[0m' + '   '
@@ -44,12 +44,22 @@ def play(deck, hands, board_state, token):
         print("Que faire ?")
         inp = input()
         if inp  == 'play':#, 'discard', 'hint']:
-            print("Quelle carte a jouer ?")
+            print("Tu joue quelle carte ?")
+            inp = input()
+            inp = int(inp)
+            played(inp)
         elif inp == 'discard':
-            print("Quelle carte a defausser ?")
-            pass
+            print("Tu defausse quelle carte ?")
+            inp = input()
+            inp = int(inp)
+            discarded(inp)
         elif inp == 'hint':
-            print("Quel indice donner ?")
+            print("Indice sur quelle joueur ?")
+            inp = input()
+            inp = int(inp)
+            hinted(inp)
+        else:
+            print("Ce n'est pas une action")
 
 
 if __name__ == '__main__':
@@ -76,7 +86,9 @@ if __name__ == '__main__':
     for i in range(number_player):
         hands.append([])
         for j in range(hand_size):
-            hands[i].append(deck.pop())
+            card = deck.pop()
+            hands[i].append([card[0], card[1], -1, -1])
+            #hands[i].append(deck.pop())
     print("###############################3")
     print(deck)
     print("###############################3")
@@ -88,16 +100,18 @@ if __name__ == '__main__':
     #hints = 8
     tokens = {'error': 0, 'hint': 8}
     current_player = 0
+    last_turn = -1
     print_hands_and_state(hands, board_state)
     print('tjghjghghghgr')
     exit(1)
     while True:
-        if error > 2:
+        if tokens['error'] > 2:
             print("Trop d'erreurs ! C'est perdu !")
             exit(1)
         if last_turn == current_player:
             print("C'est fini !")
             print(board_state)
             exit(1)
-        if current_player == 0:
-            play(deck, hands, board_state, token)
+        #if current_player == 0:
+        play(deck, hands, board_state, token, current_player)
+        current_player = (current_player + 1) % 4
