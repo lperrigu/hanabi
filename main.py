@@ -29,6 +29,12 @@ def init_deck():
 
 
 def print_hands_and_state(hands, board_state):
+    color_print = {'r':str('\x1b[0;30;41m'),
+                   'b':str('\x1b[0;30;44m'),
+                   'g':str('\x1b[0;30;42m'),
+                   'y':str('\x1b[0;30;43m'),
+                   'w':str('\x1b[0;30;47m'),
+                   'end':str('\x1b[0m')}
     print("Composition des feux d'artifices :")
     print('\x1b[0;30;41m' + str(board_state['r']) + '\x1b[0m' + '   '
         + '\x1b[0;30;42m' + str(board_state['g']) + '\x1b[0m' + '   '
@@ -36,30 +42,97 @@ def print_hands_and_state(hands, board_state):
         + '\x1b[0;30;44m' + str(board_state['b']) + '\x1b[0m' + '   '
         + '\x1b[0;30;43m' + str(board_state['y']) + '\x1b[0m')
     print("\n\nMains des joueurs")
+    for i in range(len(hands)):
+        str_print = ''
+        print("\nJoueur " + str(i) + " :")
+        for j in range(len(hands[i])):
+            str_print += ('   ' + color_print[hands[i][j][1]]
+                          + str(hands[i][j][0]) + color_print['end'] + '   ')
+        str_print += '\n '
+        for j in range(len(hands[i])):
+            hint_number = '?' if hands[i][j][2] is False else hands[i][j][2]
+            hint_color = '?' if hands[i][j][3] is False else hands[i][j][3]
+            str_print += hint_number + '   ' + hint_color + '  '
+        print(str_print)
+#123*123*123*
+#1*123*123
 
 
-def play(deck, hands, board_state, token):
+def played(inp, deck, hands, board_state, tokens, current_player):
+    color_card_played = hands[current_player][inp][1]
+    value_card_played = hands[current_player][inp][0]
+    if board_state[color_card_played] == value_card_played - 1:
+        board_state[color_card_played] += 1
+    else:
+        print("Ca ne marche pas ! Erreur !")
+        tokens['error'] += 1
+    hands[current_player].pop(inp)
+    card = deck.pop()
+    hands[current_player].append([card[0], card[1], False, False])
+    return True
+
+
+def discarded(inp, deck, hands, board_state, tokens, current_player):
+    color_card_played = hands[current_player][inp][1]
+    value_card_played = hands[current_player][inp][0]
+    if tokens['hints'] < 8:
+        tokens['hints'] += 1
+    hands[current_player].pop(inp)
+    card = deck.pop()
+    hands[current_player].append([card[0], card[1], False, False])
+    return True
+
+
+def hinted(inp, deck, hands, board_state, tokens, current_player):
+    tokens['hint'] -= 1
+    number_hint = False
+    color_hint = False
+    if inp[1].isdigit():
+        number_hint = True
+        print("OUI un chiofre")
+    elif inp[1].isalpha():
+        color_hint = True
+        print("OUI un color")
+    inp[0] = int(inp[0])
+    for i in range(len(hands[inp[0]])):
+        if number_hint and hands[inp[0]][i][0] == int(inp[1]):
+            hands[inp[0]][i][2] = inp[1]
+        if color_hint and hands[inp[0]][i][1] == inp[1]:
+            hands[inp[0]][i][3] = inp[1]
+    return True
+
+
+def play(deck, hands, board_state, tokens, current_player = 0):
     while (True):
+        ret = False
         print_hands_and_state(hands, board_state)
-        print("Que faire ?")
+        print("Que faire joueur " + str(current_player) + " ?")
         inp = input()
         if inp  == 'play':#, 'discard', 'hint']:
             print("Tu joue quelle carte ?")
             inp = input()
             inp = int(inp)
-            played(inp)
+            ret = played(inp, deck, hands, board_state, tokens, current_player)
         elif inp == 'discard':
             print("Tu defausse quelle carte ?")
             inp = input()
             inp = int(inp)
-            discarded(inp)
+            ret = discarded(inp, deck, hands, board_state,
+                            tokens, current_player)
         elif inp == 'hint':
-            print("Indice sur quelle joueur ?")
-            inp = input()
-            inp = int(inp)
-            hinted(inp)
+            if tokens['hint'] > 0:
+                print("Quelle indice ?")
+                inp = input()
+                inp = inp.split()
+                #inp = [int(i) for i in inp]
+                ret = hinted(inp, deck, hands, board_state,
+                             tokens, current_player)
+            else:
+                print("Pas d'indices de dispo !")
         else:
             print("Ce n'est pas une action")
+        if ret:
+            return True
 
 
 if __name__ == '__main__':
@@ -87,7 +160,7 @@ if __name__ == '__main__':
         hands.append([])
         for j in range(hand_size):
             card = deck.pop()
-            hands[i].append([card[0], card[1], -1, -1])
+            hands[i].append([card[0], card[1], False, False])
             #hands[i].append(deck.pop())
     print("###############################3")
     print(deck)
@@ -96,14 +169,10 @@ if __name__ == '__main__':
     print("###############################3")
     print(board_state)
     print("###############################3")
-    #error = 0
-    #hints = 8
     tokens = {'error': 0, 'hint': 8}
     current_player = 0
     last_turn = -1
     print_hands_and_state(hands, board_state)
-    print('tjghjghghghgr')
-    exit(1)
     while True:
         if tokens['error'] > 2:
             print("Trop d'erreurs ! C'est perdu !")
@@ -113,5 +182,5 @@ if __name__ == '__main__':
             print(board_state)
             exit(1)
         #if current_player == 0:
-        play(deck, hands, board_state, token, current_player)
+        play(deck, hands, board_state, tokens, current_player)
         current_player = (current_player + 1) % 4
