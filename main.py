@@ -11,6 +11,8 @@
 # **************************************************************************** #
 
 from random import shuffle
+from computer_play import computer_play
+from player_play import player_play
 import sys
 
 def init_deck():
@@ -101,8 +103,8 @@ def hinted(inp, deck, hands, board_state, tokens, current_player):
             hands[inp[0]][i][3] = inp[1]
     return True
 
-
-def play(deck, hands, board_state, tokens, current_player = 0):
+"""
+def player_play(deck, hands, board_state, tokens, current_player = 0):
     while (True):
         ret = False
         print_hands_and_state(hands, board_state)
@@ -133,7 +135,7 @@ def play(deck, hands, board_state, tokens, current_player = 0):
             print("Ce n'est pas une action")
         if ret:
             return True
-
+"""
 
 if __name__ == '__main__':
     deck = init_deck()
@@ -181,6 +183,10 @@ if __name__ == '__main__':
             print("C'est fini !")
             print(board_state)
             exit(1)
-        #if current_player == 0:
-        play(deck, hands, board_state, tokens, current_player)
+        if current_player == 0:
+            player_play(deck, hands, board_state, tokens, current_player)
+        else:
+            print("lol acvanr")
+            computer_play(deck, hands, board_state, tokens, current_player)
+        print("lol fini")
         current_player = (current_player + 1) % 4
