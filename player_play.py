@@ -8,9 +8,10 @@
 #    Created: 2017/06/20 15:13:45 by lperrigu          #+#    #+#              #
 #    Updated: 2017/06/20 16:39:19 by lperrigu         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #\
+# **************************************************************************** #
 
 import sys
+from display import print_hands_and_state
 
 
 def player_play(deck, hands, board_state, tokens, current_player = 0):
@@ -20,7 +21,7 @@ def player_play(deck, hands, board_state, tokens, current_player = 0):
         print("Que faire joueur " + str(current_player) + " ?")
         inp = input()
         if inp  == 'play':#, 'discard', 'hint']:
-            print("Tu joue quelle carte ?")
+            print("Tu joues quelle carte ?")
             inp = input()
             inp = int(inp)
             ret = played(inp, deck, hands, board_state, tokens, current_player)

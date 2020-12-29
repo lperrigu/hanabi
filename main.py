@@ -13,6 +13,7 @@
 from random import shuffle
 from computer_play import computer_play
 from player_play import player_play
+from display import print_hands_and_state
 import sys
 
 def init_deck():
@@ -28,36 +29,6 @@ def init_deck():
             (3, 'w'), (4, 'w'), (4, 'w'), (5, 'w')]
     shuffle(deck)
     return deck
-
-
-def print_hands_and_state(hands, board_state):
-    color_print = {'r':str('\x1b[0;30;41m'),
-                   'b':str('\x1b[0;30;44m'),
-                   'g':str('\x1b[0;30;42m'),
-                   'y':str('\x1b[0;30;43m'),
-                   'w':str('\x1b[0;30;47m'),
-                   'end':str('\x1b[0m')}
-    print("Composition des feux d'artifices :")
-    print('\x1b[0;30;41m' + str(board_state['r']) + '\x1b[0m' + '   '
-        + '\x1b[0;30;42m' + str(board_state['g']) + '\x1b[0m' + '   '
-        + '\x1b[0;30;47m' + str(board_state['w']) + '\x1b[0m' + '   '
-        + '\x1b[0;30;44m' + str(board_state['b']) + '\x1b[0m' + '   '
-        + '\x1b[0;30;43m' + str(board_state['y']) + '\x1b[0m')
-    print("\n\nMains des joueurs")
-    for i in range(len(hands)):
-        str_print = ''
-        print("\nJoueur " + str(i) + " :")
-        for j in range(len(hands[i])):
-            str_print += ('   ' + color_print[hands[i][j][1]]
-                          + str(hands[i][j][0]) + color_print['end'] + '   ')
-        str_print += '\n '
-        for j in range(len(hands[i])):
-            hint_number = '?' if hands[i][j][2] is False else hands[i][j][2]
-            hint_color = '?' if hands[i][j][3] is False else hands[i][j][3]
-            str_print += hint_number + '   ' + hint_color + '  '
-        print(str_print)
-#123*123*123*
-#1*123*123
 
 
 def played(inp, deck, hands, board_state, tokens, current_player):
@@ -103,39 +74,6 @@ def hinted(inp, deck, hands, board_state, tokens, current_player):
             hands[inp[0]][i][3] = inp[1]
     return True
 
-"""
-def player_play(deck, hands, board_state, tokens, current_player = 0):
-    while (True):
-        ret = False
-        print_hands_and_state(hands, board_state)
-        print("Que faire joueur " + str(current_player) + " ?")
-        inp = input()
-        if inp  == 'play':#, 'discard', 'hint']:
-            print("Tu joue quelle carte ?")
-            inp = input()
-            inp = int(inp)
-            ret = played(inp, deck, hands, board_state, tokens, current_player)
-        elif inp == 'discard':
-            print("Tu defausse quelle carte ?")
-            inp = input()
-            inp = int(inp)
-            ret = discarded(inp, deck, hands, board_state,
-                            tokens, current_player)
-        elif inp == 'hint':
-            if tokens['hint'] > 0:
-                print("Quelle indice ?")
-                inp = input()
-                inp = inp.split()
-                #inp = [int(i) for i in inp]
-                ret = hinted(inp, deck, hands, board_state,
-                             tokens, current_player)
-            else:
-                print("Pas d'indices de dispo !")
-        else:
-            print("Ce n'est pas une action")
-        if ret:
-            return True
-"""
 
 if __name__ == '__main__':
     deck = init_deck()
@@ -176,6 +114,9 @@ if __name__ == '__main__':
     last_turn = -1
     print_hands_and_state(hands, board_state)
     while True:
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        print(board_state)
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2")
         if tokens['error'] > 2:
             print("Trop d'erreurs ! C'est perdu !")
             exit(1)
@@ -183,10 +124,10 @@ if __name__ == '__main__':
             print("C'est fini !")
             print(board_state)
             exit(1)
-        if current_player == 0:
-            player_play(deck, hands, board_state, tokens, current_player)
-        else:
-            print("lol acvanr")
-            computer_play(deck, hands, board_state, tokens, current_player)
+        #        if current_player == 0:
+        #            player_play(deck, hands, board_state, tokens, current_player)
+        #        else:
+        #            print("lol acvanr")
+        computer_play(deck, hands, board_state, tokens, current_player)
         print("lol fini")
         current_player = (current_player + 1) % 4
