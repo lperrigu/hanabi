@@ -12,6 +12,7 @@
 
 import sys
 from display import print_hands_and_state
+from tools import played, discarded, hinted
 
 
 def player_play(deck, hands, board_state, tokens, current_player = 0):
