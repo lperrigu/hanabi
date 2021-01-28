@@ -18,7 +18,7 @@ def safe_discard(deck, hands, board_state, tokens, current_player):
     hands[current_player][0][1] = 'r'
     hands[current_player][0][2] = True
     hands[current_player][0][3] = True
-    board_state['r'] = 2
+    board_state['r'] = 4
     for i in range(len(hands[current_player])):
         number = hands[current_player][i][0]
         color = hands[current_player][i][1]
